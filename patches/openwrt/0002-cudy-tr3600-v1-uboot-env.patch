@@ -1,0 +1,15 @@
+--- a/package/boot/uboot-tools/uboot-envtools/files/mediatek_filogic
++++ b/package/boot/uboot-tools/uboot-envtools/files/mediatek_filogic
+@@ -130,6 +130,14 @@ iptime,ax3000m)
+ 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x20000" "0x80000"
+ 	;;
++cudy,tr3600-v1)
++	# Cudy TR3600 dual-image: u-boot environment lives in UBI volume
++	. /lib/upgrade/nand.sh
++	envubi=$(nand_find_ubi ubi)
++	envdev=/dev/$(nand_find_volume "$envubi" u-boot-env)
++	ubootenv_add_uci_config "$envdev" "0x0" "0x80000" "0x80000" "1"
++	;;
+ dlink,aquila-pro-ai-e30-a1|\
+ dlink,aquila-pro-ai-m30-a1|\
+ dlink,aquila-pro-ai-m60-a1)

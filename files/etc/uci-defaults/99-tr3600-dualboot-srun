@@ -1,0 +1,7 @@
+#!/bin/sh
+# First-boot defaults for Cudy TR3600 dual-image build.
+
+# Enable srun daemon (login on boot + disconnect watch).
+[ -x /etc/init.d/srun ] && /etc/init.d/srun enable 2>/dev/null
+
+exit 0

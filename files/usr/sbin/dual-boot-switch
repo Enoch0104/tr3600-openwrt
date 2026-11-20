@@ -1,0 +1,49 @@
+#!/bin/sh
+# Cudy TR3600 dual-image slot switcher.
+# Usage: dual-boot-switch [0|1|status]
+#   status  - show current slot info (default)
+#   0 / 1   - switch to that slot and reboot
+#   other   - toggle to the other slot and reboot
+
+UBP=/sys/module/boot_param/parameters
+
+get_env() {
+	fw_printenv -n "$1" 2>/dev/null
+}
+
+do_status() {
+	local cur slot0 slot1
+	cur="$(get_env dual_boot.current_slot)"
+	slot0="$(get_env dual_boot.slot_0_invalid)"
+	slot1="$(get_env dual_boot.slot_1_invalid)"
+	echo "current_slot   : ${cur:-?}"
+	echo "slot_0_invalid : ${slot0:-?}"
+	echo "slot_1_invalid : ${slot1:-?}"
+	if [ -r "$UBP/boot_kernel_part" ]; then
+		echo "boot_kernel    : $(cat "$UBP/boot_kernel_part")"
+		echo "boot_rootfs    : $(cat "$UBP/boot_rootfs_part")"
+		echo "upgrade_kernel : $(cat "$UBP/upgrade_kernel_part")"
+		echo "upgrade_rootfs : $(cat "$UBP/upgrade_rootfs_part")"
+	fi
+}
+
+case "$1" in
+	status|"")
+		do_status
+		;;
+	0|1)
+		target="$1"
+		fw_setenv dual_boot.current_slot "$target"
+		fw_setenv "dual_boot.slot_${target}_invalid" 0
+		echo "Rebooting into slot $target ..."
+		reboot
+		;;
+	*)
+		cur="$(get_env dual_boot.current_slot)"
+		if [ "$cur" = "0" ]; then target=1; else target=0; fi
+		fw_setenv dual_boot.current_slot "$target"
+		fw_setenv "dual_boot.slot_${target}_invalid" 0
+		echo "Rebooting into slot $target ..."
+		reboot
+		;;
+esac

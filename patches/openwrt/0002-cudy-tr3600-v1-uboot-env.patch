@@ -1,6 +1,6 @@
 --- a/package/boot/uboot-tools/uboot-envtools/files/mediatek_filogic
 +++ b/package/boot/uboot-tools/uboot-envtools/files/mediatek_filogic
-@@ -130,6 +130,14 @@ iptime,ax3000m)
+@@ -130,5 +130,12 @@ iptime,ax3000m)
  	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x20000" "0x80000"
  	;;
 +cudy,tr3600-v1)

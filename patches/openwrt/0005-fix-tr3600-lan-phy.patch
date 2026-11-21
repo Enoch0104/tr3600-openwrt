@@ -1,0 +1,47 @@
+--- a/target/linux/mediatek/dts/mt7987b-cudy-tr3600-v1.dts
++++ b/target/linux/mediatek/dts/mt7987b-cudy-tr3600-v1.dts
+@@ -2,8 +2,10 @@
+
+ /dts-v1/;
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/leds/common.h>
+
+ #include "mt7987b.dtsi"
+@@ -72,10 +74,12 @@
+ &gmac1 {
+ 	nvmem-cells = <&macaddr_bdinfo_de00 0>;
+ 	nvmem-cell-names = "mac-address";
++	mac-type = "xgdm";
+ 	phy-handle = <&phy15>;
+ 	phy-mode = "internal";
+ 	status = "okay";
+ };
+
+ &mdio {
++	/delete-property/ reset-gpios;
++	/delete-property/ reset-delay-us;
++
+ 	phy1: phy@1 {
+-		compatible = "ethernet-phy-id001c.c849";
++		compatible = "ethernet-phy-id001c.c849", "ethernet-phy-id4f51.ea19";
+ 		reg = <1>;
+ 		reset-gpios = <&pio 42 GPIO_ACTIVE_LOW>;
+ 		reset-assert-us = <100000>;
+ 		reset-deassert-us = <120000>;
++		phy-mode = "2500base-x";
++		full-duplex;
++		pause;
+ 	};
+
+ 	phy15: phy@f {
+ 		compatible = "ethernet-phy-ieee802.3-c45";
++		interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-parent = <&gic>;
+ 		reg = <15>;
++		phy-mode = "internal";
+ 		pinctrl-names = "i2p5gbe-led";
+ 		pinctrl-0 = <&i2p5gbe_led0_pins>;
+ 	};
